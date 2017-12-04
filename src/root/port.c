@@ -156,7 +156,7 @@ bool Port::isFloat64LiteralOutOfRange(const char *p)
 
 #endif
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__
 
 #include <math.h>
 #include <stdlib.h>

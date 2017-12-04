@@ -1105,7 +1105,7 @@ void FuncDeclaration_toObjFile(FuncDeclaration *fd, bool multiobj)
         pi++;
     }
 
-    if ((global.params.isLinux || global.params.isOSX || global.params.isFreeBSD || global.params.isSolaris) &&
+    if ((global.params.isLinux || global.params.isOSX || global.params.isFreeBSD || global.params.isDragonFlyBSD || global.params.isSolaris) &&
          fd->linkage != LINKd && shidden && sthis)
     {
         /* swap shidden and sthis

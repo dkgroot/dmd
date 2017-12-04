@@ -701,7 +701,7 @@ void searchfixlist(symbol *s)
                 // resolve directly.
                 if (s->Sseg == p->Lseg &&
                     (s->Sclass == SCstatic ||
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
                      (!(config.flags3 & CFG3pic) && s->Sclass == SCglobal)) &&
 #else
                         s->Sclass == SCglobal) &&

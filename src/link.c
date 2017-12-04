@@ -23,7 +23,7 @@
 #endif
 #endif
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
 #include        <sys/types.h>
 #include        <sys/wait.h>
 #include        <unistd.h>
@@ -83,7 +83,7 @@ void writeFilename(OutBuffer *buf, const char *filename)
     writeFilename(buf, filename, strlen(filename));
 }
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
 
 /*****************************
  * As it forwards the linker error message to stderr, checks for the presence
@@ -446,7 +446,7 @@ int runLINK()
         }
         return status;
     }
-#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
     pid_t childpid;
     int status;
 
@@ -464,7 +464,7 @@ int runLINK()
     // add the "-dynamiclib" flag
     if (global.params.dll)
         argv.push("-dynamiclib");
-#elif __linux__ || __FreeBSD__ || __OpenBSD__ || __sun
+#elif __linux__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
     if (global.params.dll)
         argv.push("-shared");
 #endif
@@ -875,7 +875,7 @@ int runProgram()
         ex = global.params.exefile;
     // spawnlp returns intptr_t in some systems, not int
     return spawnv(0,ex,argv.tdata());
-#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
     pid_t childpid;
     int status;
 

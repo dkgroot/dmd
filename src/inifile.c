@@ -23,7 +23,7 @@
 #include        <sys/syslimits.h>
 #endif
 
-#if __FreeBSD__ || __OpenBSD__ || __sun
+#if __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
 // for PATH_MAX
 #include        <limits.h>
 #endif
@@ -82,7 +82,7 @@ const char *findConfFile(const char *argv0, const char *inifile)
     if (FileName::exists(filename))
         return filename;
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
     // Search PATH for argv0
     const char *p = getenv("PATH");
 #if LOG
@@ -112,7 +112,7 @@ const char *findConfFile(const char *argv0, const char *inifile)
 #endif
     assert(SYSCONFDIR != NULL && strlen(SYSCONFDIR));
     filename = FileName::combine(SYSCONFDIR, inifile);
-#endif // __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#endif // __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
 
     return filename;
 }

@@ -50,6 +50,8 @@ D_ATTRIBUTE_FORMAT(2, 0) void vdeprecationSupplemental(const Loc& loc, const cha
 
 // Called after printing out fatal error messages.
 D_ATTRIBUTE_NORETURN void fatal();
-D_ATTRIBUTE_NORETURN void halt();
+
+//D_ATTRIBUTE_NORETURN void halt();					// errors.c:281:1: warning: 'noreturn' function does return
+void halt();
 
 #endif /* DMD_ERRORS_H */

@@ -27,7 +27,7 @@ void Global::_init()
 
 #if TARGET_WINDOS
     obj_ext  = "obj";
-#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     obj_ext  = "o";
 #else
 #error "fix this"
@@ -35,7 +35,7 @@ void Global::_init()
 
 #if TARGET_WINDOS
     lib_ext  = "lib";
-#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     lib_ext  = "a";
 #else
 #error "fix this"
@@ -43,7 +43,7 @@ void Global::_init()
 
 #if TARGET_WINDOS
     dll_ext  = "dll";
-#elif TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     dll_ext  = "so";
 #elif TARGET_OSX
     dll_ext = "dylib";
@@ -53,7 +53,7 @@ void Global::_init()
 
 #if TARGET_WINDOS
     run_noext = false;
-#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     // Allow 'script' D source files to have no extension.
     run_noext = true;
 #else

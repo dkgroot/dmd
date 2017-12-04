@@ -30,7 +30,7 @@
 #if _WIN32
 #include <direct.h>
 #endif
-#if POSIX
+#if POSIX || __DragonFly__
 #include <unistd.h>
 #endif
 

@@ -96,7 +96,7 @@ void Target::_init()
     }
 
     if (global.params.isLinux || global.params.isFreeBSD
-        || global.params.isOpenBSD || global.params.isSolaris)
+        || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
     {
         realsize = 12;
         realpad = 2;
@@ -173,7 +173,7 @@ unsigned Target::alignsize(Type* type)
 
         case Tcomplex32:
             if (global.params.isLinux || global.params.isOSX || global.params.isFreeBSD
-                || global.params.isOpenBSD || global.params.isSolaris)
+                || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
                 return 4;
             break;
 
@@ -183,7 +183,7 @@ unsigned Target::alignsize(Type* type)
         case Timaginary64:
         case Tcomplex64:
             if (global.params.isLinux || global.params.isOSX || global.params.isFreeBSD
-                || global.params.isOpenBSD || global.params.isSolaris)
+                || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
                 return global.params.is64bit ? 8 : 4;
             break;
 
@@ -233,6 +233,11 @@ unsigned Target::critsecsize()
         // sizeof(pthread_mutex_t) for OpenBSD.
         return global.params.isLP64 ? 8 : 4;
     }
+    else if (global.params.isDragonFlyBSD)
+    {
+        // sizeof(pthread_mutex_t) for DragonFlyBSD.
+        return global.params.isLP64 ? 8 : 4;
+    }
     else if (global.params.isOSX)
     {
         // sizeof(pthread_mutex_t) for OSX.
@@ -261,6 +266,7 @@ Type *Target::va_listType()
     else if (global.params.isLinux ||
              global.params.isFreeBSD ||
              global.params.isOpenBSD ||
+             global.params.isDragonFlyBSD ||
              global.params.isSolaris ||
              global.params.isOSX)
     {
@@ -478,7 +484,7 @@ void Target::prefixName(OutBuffer *buf, LINK linkage)
 
 const char *Target::toCppMangle(Dsymbol *s)
 {
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     return toCppMangleItanium(s);
 #elif TARGET_WINDOS
     return toCppMangleMSVC(s);
@@ -489,7 +495,7 @@ const char *Target::toCppMangle(Dsymbol *s)
 
 const char *Target::cppTypeInfoMangle(ClassDeclaration *cd)
 {
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     return cppTypeInfoMangleItanium(cd);
 #elif TARGET_WINDOS
     return cppTypeInfoMangleMSVC(cd);
