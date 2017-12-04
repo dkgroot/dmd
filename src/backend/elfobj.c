@@ -48,6 +48,8 @@
 #  define ELFOSABI ELFOSABI_FREEBSD
 # elif TARGET_SOLARIS
 #  define ELFOSABI ELFOSABI_SYSV
+# elif TARGET_DRAGONFLYBSD
+#  define ELFOSABI ELFOSABI_SYSV
 # elif TARGET_OPENBSD
 #  define ELFOSABI ELFOSABI_OPENBSD
 # else
@@ -2018,7 +2020,7 @@ char *obj_mangle2(Symbol *s,char *dest)
             }
             break;
         case mTYman_std:
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             if (tyfunc(s->ty()) && !variadic(s->Stype))
 #else
             if (!(config.flags4 & CFG4oldstdmangle) &&

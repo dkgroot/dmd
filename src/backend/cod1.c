@@ -1260,7 +1260,7 @@ code *getlvalue(code *pcs,elem *e,regm_t keepmsk)
     case FLextern:
         if (s->Sident[0] == '_' && memcmp(s->Sident + 1,"tls_array",10) == 0)
         {
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             // Rewrite as GS:[0000], or FS:[0000] for 64 bit
             if (I64)
             {
@@ -1304,7 +1304,7 @@ code *getlvalue(code *pcs,elem *e,regm_t keepmsk)
     case FLcsdata:
     case FLgot:
     case FLgotoff:
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     case FLtlsdata:
 #endif
     L3:
@@ -1844,11 +1844,12 @@ void getClibInfo(unsigned clib, symbol **ps, ClibInfo **pinfo)
         clib_inited = true;
     }
 
-    const unsigned ex_unix = (EX_LINUX   | EX_LINUX64   |
-                              EX_OSX     | EX_OSX64     |
-                              EX_FREEBSD | EX_FREEBSD64 |
-                              EX_OPENBSD | EX_OPENBSD64 |
-                              EX_SOLARIS | EX_SOLARIS64);
+    const unsigned ex_unix = (EX_LINUX          | EX_LINUX64   |
+                              EX_OSX            | EX_OSX64     |
+                              EX_FREEBSD        | EX_FREEBSD64 |
+                              EX_OPENBSD        | EX_OPENBSD64 |
+                              EX_DRAGONFLYBSD64 |
+                              EX_SOLARIS        | EX_SOLARIS64);
 
     ClibInfo *cinfo = &clibinfo[clib];
     symbol *s = clibsyms[clib];
@@ -2535,7 +2536,7 @@ code *callclib(elem *e,unsigned clib,regm_t *pretregs,regm_t keepmask)
         }
         if (pushebx)
         {
-            if (config.exe & (EX_LINUX | EX_LINUX64 | EX_FREEBSD | EX_FREEBSD64))
+            if (config.exe & (EX_LINUX | EX_LINUX64 | EX_FREEBSD | EX_FREEBSD64 | EX_DRAGONFLYBSD64))
             {
                 c = gen1(c, 0x50 + CX);                             // PUSH ECX
                 c = gen1(c, 0x50 + BX);                             // PUSH EBX
@@ -3353,7 +3354,7 @@ STATIC code * funccall(elem *e,unsigned numpara,unsigned numalign,
             if (tym1 == TYifunc)
                 c1 = gen1(c1,0x9C);                             // PUSHF
             ce = CNIL;
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             if (s != tls_get_addr_sym)
             {
                 //printf("call %s\n", s->Sident);
@@ -3362,7 +3363,7 @@ STATIC code * funccall(elem *e,unsigned numpara,unsigned numalign,
 #endif
             ce = gencs(ce,farfunc ? 0x9A : 0xE8,0,fl,s);      // CALL extern
             code_orflag(ce, farfunc ? (CFseg | CFoff) : (CFselfrel | CFoff));
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             if (s == tls_get_addr_sym)
             {
                 if (I64)
@@ -3391,7 +3392,7 @@ STATIC code * funccall(elem *e,unsigned numpara,unsigned numalign,
         tym_t e11ty = tybasic(e11->Ety);
         assert(!I16 || (e11ty == (farfunc ? TYfptr : TYnptr)));
         c = cat(c, load_localgot());
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         if (config.flags3 & CFG3pic && I32)
             keepmsk |= mBX;
 #endif

@@ -384,7 +384,7 @@ size_t CTFloat::hash(real_t a)
 
 #endif
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__
 
 #include <math.h>
 #if __FreeBSD__ && __i386__
@@ -457,7 +457,7 @@ bool CTFloat::isNaN(real_t r)
 #else
     return __inline_isnan(r);
 #endif
-#elif __FreeBSD__ || __OpenBSD__
+#elif __FreeBSD__ || __OpenBSD__ || __DragonFly__
     return isnan(r);
 #else
     #undef isnan
@@ -477,7 +477,7 @@ bool CTFloat::isInfinity(real_t r)
 {
 #if __APPLE__
     return fpclassify(r) == FP_INFINITE;
-#elif __FreeBSD__ || __OpenBSD__
+#elif __FreeBSD__ || __OpenBSD__ || __DragonFly__
     return isinf(r);
 #else
     #undef isinf

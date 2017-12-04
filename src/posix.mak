@@ -116,12 +116,13 @@ ENABLE_DEBUG := 1
 endif
 
 # Append different flags for debugging, profiling and release.
+# silently allow deprecated features (-d) for dmd-cxx, as this version is deprecated anyway
 ifdef ENABLE_DEBUG
 CFLAGS += -g -g3 -DDEBUG=1 -DUNITTEST
-DFLAGS += -g -debug
+DFLAGS += -g -debug -d
 else
 CFLAGS += -O2
-DFLAGS += -O -inline
+DFLAGS += -O -inline -d
 endif
 ifdef ENABLE_PROFILING
 CFLAGS  += -pg -fprofile-arcs -ftest-coverage
@@ -139,7 +140,12 @@ LDFLAGS += -flto
 endif
 
 # Uniqe extra flags if necessary
-DMD_FLAGS  := -I$(ROOT) -Wuninitialized
+ifeq ($(OS), dragonflybsd)
+	DMD_FLAGS  := -I$(ROOT)
+	CFLAGS +=  -DTARGET_WINDOS=0		# required when compiling backend, TARGET_WINDOS seems to be switched on somewhere
+else
+	DMD_FLAGS  := -I$(ROOT) -Wuninitialized
+endif
 GLUE_FLAGS := -I$(ROOT) -I$(TK) -I$(C)
 BACK_FLAGS := -I$(ROOT) -I$(TK) -I$(C) -I. -DDMDV2=1
 ROOT_FLAGS := -I$(ROOT)

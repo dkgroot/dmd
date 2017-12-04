@@ -40,6 +40,7 @@ Macros defined by the compiler, not the code:
         __APPLE__       Mac OSX
         __FreeBSD__     FreeBSD
         __OpenBSD__     OpenBSD
+        __DragonFlyBSD__ DragonFlyBSD
         __sun           Solaris, OpenSolaris, SunOS, OpenIndiana, etc
 
 For the target systems, there are the target operating system and
@@ -51,6 +52,7 @@ the target object file format:
         TARGET_OSX      Covers 32 and 64 bit Mac OSX
         TARGET_FREEBSD  Covers 32 and 64 bit FreeBSD
         TARGET_OPENBSD  Covers 32 and 64 bit OpenBSD
+        TARGET_DRAGONFLYBSD  Covers 64 bit DragonFlyBSD
         TARGET_SOLARIS  Covers 32 and 64 bit Solaris
 
     It is expected that the compiler for each platform will be able
