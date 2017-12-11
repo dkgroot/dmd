@@ -11,6 +11,9 @@
 
 #include <stdio.h>
 #include <assert.h>
+#if __DragonFly__
+#include <machine/int_limits.h>
+#endif
 
 #include "mars.h"
 #include "dsymbol.h"

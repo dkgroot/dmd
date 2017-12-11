@@ -366,7 +366,7 @@ void outdata(symbol *s)
                     objmod->reftocodeseg(seg,offset,dt->DTabytes);
                 else
 #endif
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
                     objmod->reftodatseg(seg,offset,dt->DTabytes,dt->DTseg,flags);
 #else
                 /*else*/ if (dt->DTseg == DATA)

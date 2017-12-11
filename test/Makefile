@@ -84,7 +84,11 @@ export OS
 ifeq (freebsd,$(OS))
     SHELL=/usr/local/bin/bash
 else
-    SHELL=/bin/bash
+    ifeq (dragonflybsd, $(OS))
+        SHELL=/usr/local/bin/bash
+    else
+        SHELL=/bin/bash
+    endif
 endif
 QUIET=@
 export RESULTS_DIR=test_results
@@ -92,28 +96,30 @@ export MODEL
 export REQUIRED_ARGS=
 
 ifeq ($(findstring win,$(OS)),win)
-export ARGS=-inline -release -g -O -unittest
-export DMD=../src/dmd.exe
-export EXE=.exe
-export OBJ=.obj
-export DSEP=\\
-export SEP=$(subst /,\,/)
+	# silently allow deprecated features(-d) for dmd-cxx, as this version is deprecated anyway
+	export ARGS=-inline -release -g -O -unittest -d
+	export DMD=../src/dmd.exe
+	export EXE=.exe
+	export OBJ=.obj
+	export DSEP=\\
+	export SEP=$(subst /,\,/)
 
-DRUNTIME_PATH=..\..\druntime
-PHOBOS_PATH=..\..\phobos
-export DFLAGS=-I$(DRUNTIME_PATH)\import -I$(PHOBOS_PATH)
-export LIB=$(PHOBOS_PATH)
+	DRUNTIME_PATH=..\..\druntime
+	PHOBOS_PATH=..\..\phobos
+	export DFLAGS=-I$(DRUNTIME_PATH)\import -I$(PHOBOS_PATH)
+	export LIB=$(PHOBOS_PATH)
 else
-export ARGS=-inline -release -gc -O -unittest -fPIC
-export DMD=../src/dmd
-export EXE=
-export OBJ=.o
-export DSEP=/
-export SEP=/
+	# silently allow deprecated features(-d) for dmd-cxx, as this version is deprecated anyway
+	export ARGS=-inline -release -gc -O -unittest -fPIC -d
+	export DMD=../src/dmd
+	export EXE=
+	export OBJ=.o
+	export DSEP=/
+	export SEP=/
 
-DRUNTIME_PATH=../../druntime
-PHOBOS_PATH=../../phobos
-export DFLAGS=-I$(DRUNTIME_PATH)/import -I$(PHOBOS_PATH) -L-L$(PHOBOS_PATH)/generated/$(OS)/release/$(MODEL)
+	DRUNTIME_PATH=../../druntime
+	PHOBOS_PATH=../../phobos
+	export DFLAGS=-I$(DRUNTIME_PATH)/import -I$(PHOBOS_PATH) -L-L$(PHOBOS_PATH)/generated/$(OS)/release/$(MODEL)
 endif
 
 ifeq ($(OS),osx)
@@ -125,6 +131,18 @@ endif
 ifeq ($(OS),freebsd)
 DISABLED_TESTS += dhry
 # runnable/dhry.d(488): Error: undefined identifier dtime
+endif
+
+ifeq ($(OS),dragonflybsd)
+#DISABLED_TESTS += ddoc2273 ddoc10367 diag9250 fail80_m32 fail37_m32 fail238_m32 fail13434_m32 diag7420 diag12480 diag9635 test42
+DISABLED_TESTS += ddoc2273
+DISABLED_TESTS += ddoc10367
+DISABLED_TESTS += diag9250
+DISABLED_TESTS += diag7420
+DISABLED_TESTS += diag12480
+DISABLED_TESTS += diag9635
+DISABLED_TESTS += test42
+# compilable/ddoc10367.d: No backend support for destination -m32 on DragonFlyBSD
 endif
 
 ifeq ($(OS),win32)

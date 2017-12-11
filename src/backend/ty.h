@@ -165,7 +165,7 @@ extern int TYptrdiff, TYsize, TYsize_t;
 #define mTYnothrow      0x00200000       // nothrow function
 
 #if !MARS
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define mTYnoret        0x01000000        // function has no return
 #define mTYtransu       0x01000000        // transparent union
 #else
@@ -179,7 +179,7 @@ extern int TYptrdiff, TYsize, TYsize_t;
 #define mTYsyscall      0x40000000
 #define mTYjava         0x80000000
 
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define mTYTFF          0xFE000000
 #else
 #define mTYTFF          0xFF000000
@@ -347,7 +347,7 @@ extern const tym_t tytouns[];
 /* Array to give the 'relaxed' type for relaxed type checking   */
 extern unsigned char _tyrelax[];
 #define type_relax      (config.flags3 & CFG3relax)     // !=0 if relaxed type checking
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define type_semirelax  (config.flags3 & CFG3semirelax) // !=0 if semi-relaxed type checking
 #else
 #define type_semirelax  type_relax

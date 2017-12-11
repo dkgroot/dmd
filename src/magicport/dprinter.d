@@ -529,6 +529,7 @@ class DPrinter : Visitor
                     case "MACINTOSH":      println("version (OSX)"); break;
                     case "__FreeBSD__":    println("version (FreeBSD)"); break;
                     case "__OpenBSD__":    println("version (OpenBSD)"); break;
+                    case "__DragonFlyBSD__": println("version (DragonFlyBSD)"); break;
                     case "__sun":          println("version (Solaris)"); break;
 
                     case "IN_GCC":         println("version (IN_GCC)"); break;

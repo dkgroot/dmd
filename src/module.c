@@ -26,6 +26,14 @@
 #include "attrib.h"
 #include "target.h"
 
+// For getcwd()
+#if _WIN32
+#include <direct.h>
+#endif
+#if POSIX || __DragonFly__
+#include <unistd.h>
+#endif
+
 AggregateDeclaration *Module::moduleinfo;
 
 Module *Module::rootModule;
@@ -76,6 +84,7 @@ Module::Module(const char *filename, Identifier *ident, int doDocComment, int do
     sfilename = NULL;
     importedFrom = NULL;
     srcfile = NULL;
+    srcfilePath = NULL;
     docfile = NULL;
 
     debuglevel = 0;
@@ -112,6 +121,8 @@ Module::Module(const char *filename, Identifier *ident, int doDocComment, int do
         fatal();
     }
     srcfile = new File(srcfilename);
+    if (!FileName::absolute(srcfilename))
+        srcfilePath = getcwd(NULL, 0);
 
     objfile = setOutfile(global.params.objname, global.params.objdir, filename, global.obj_ext);
 
@@ -224,9 +235,14 @@ Module *Module::load(Loc loc, Identifiers *packages, Identifier *ident)
 
     /* Look for the source file
      */
+    const char *path;
     const char *result = lookForSourceFile(filename);
     if (result)
         m->srcfile = new File(result);
+        if (path)
+            m->srcfilePath = path;
+        else if (!FileName::absolute(result))
+            m->srcfilePath = getcwd(NULL, 0);
 
     if (!m->read(loc))
         return NULL;

@@ -48,6 +48,8 @@
 #  define ELFOSABI ELFOSABI_FREEBSD
 # elif TARGET_SOLARIS
 #  define ELFOSABI ELFOSABI_SYSV
+# elif TARGET_DRAGONFLYBSD
+#  define ELFOSABI ELFOSABI_DRAGONFLYBSD // POINTS to ELFOSABI_NONE/ELFOSABI_SYSV
 # elif TARGET_OPENBSD
 #  define ELFOSABI ELFOSABI_OPENBSD
 # else
@@ -77,7 +79,7 @@ char *obj_mangle2(Symbol *s,char *dest);
  * section registration and will no longer create global bracket
  * symbols (_deh_beg,_deh_end,_tlsstart,_tlsend).
  */
-#define REQUIRE_DSO_REGISTRY (DMDV2 && (TARGET_LINUX || TARGET_FREEBSD))
+#define REQUIRE_DSO_REGISTRY (DMDV2 && (TARGET_LINUX || TARGET_FREEBSD || TARGET_DRAGONFLYBSD))
 
 /***************************************************
  * Correspondence of relocation types
@@ -2017,7 +2019,7 @@ char *obj_mangle2(Symbol *s,char *dest)
             }
             break;
         case mTYman_std:
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             if (tyfunc(s->ty()) && !variadic(s->Stype))
 #else
             if (!(config.flags4 & CFG4oldstdmangle) &&

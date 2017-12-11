@@ -785,7 +785,7 @@ L1:
   e2 = e->E2;
   if (e2->Eoper == OPconst)
   {
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         if (e1->Eoper == OPrelconst && e1->EV.sp.Vsym->Sfl == FLgot)
                 goto ret;
 #endif
@@ -801,7 +801,7 @@ L1:
   }
   else if (e1->Eoper == OPconst)
   {
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         if (e2->Eoper == OPrelconst && e2->EV.sp.Vsym->Sfl == FLgot)
                 goto ret;
 #endif
@@ -4872,7 +4872,7 @@ STATIC elem * elvalist(elem *e, goal_t goal)
 
 #endif
 
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 
     assert(I64); // va_start is not an intrinsic on 32-bit
     // (OPva_start &va)

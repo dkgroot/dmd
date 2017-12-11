@@ -127,22 +127,27 @@ ifneq (,$(DEBUG))
 ENABLE_DEBUG := 1
 endif
 
-# Append different flags for debugging, profiling and release. Define
+# Append different flags for debugging, profiling and release.
 # ENABLE_DEBUG and ENABLE_PROFILING to enable profiling.
+# silently allow deprecated features (-d) for dmd-cxx, as this version is deprecated anyway
 ifdef ENABLE_DEBUG
 CFLAGS += -g -g3 -DDEBUG=1 -DUNITTEST
-DFLAGS += -g -debug
+DFLAGS += -g -debug -d
 ifdef ENABLE_PROFILING
 CFLAGS  += -pg -fprofile-arcs -ftest-coverage
 LDFLAGS += -pg -fprofile-arcs -ftest-coverage
 endif
 else
 CFLAGS += -O2
-DFLAGS += -O -inline
+DFLAGS += -O -inline -d
 endif
 
 # Uniqe extra flags if necessary
-DMD_FLAGS  := -I$(ROOT) -Wuninitialized
+ifeq ($(OS), dragonflybsd)
+	DMD_FLAGS  := -I$(ROOT)
+else
+	DMD_FLAGS  := -I$(ROOT) -Wuninitialized
+endif
 GLUE_FLAGS := -I$(ROOT) -I$(TK) -I$(C)
 BACK_FLAGS := -I$(ROOT) -I$(TK) -I$(C) -I. -DDMDV2=1
 ROOT_FLAGS := -I$(ROOT)
