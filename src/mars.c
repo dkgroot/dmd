@@ -16,7 +16,7 @@
 #include <limits.h>
 #include <string.h>
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
 #include <errno.h>
 #endif
 
@@ -132,6 +132,11 @@ static void usage()
 #else
     const char fpic[] = "";
 #endif
+#if TARGET_DRAGONFLYBSD
+    const char m32[] = "";
+#else
+    const char m32[] ="  -m32         generate 32 bit code\n";
+#endif
     logo();
     printf("\
 Documentation: http://dlang.org/\n\
@@ -175,7 +180,7 @@ Usage:\n\
   -Jpath         where to look for string imports\n\
   -Llinkerflag   pass linkerflag to link\n\
   -lib           generate library rather than object files\n\
-  -m32           generate 32 bit code\n\
+  %s\
   -m64           generate 64 bit code\n\
   -main          add default main() (e.g. for unittesting)\n\
   -man           open web browser on manual page\n\
@@ -207,7 +212,7 @@ Usage:\n\
   -wi            warnings as messages (compilation will continue)\n\
   -X             generate JSON file\n\
   -Xffilename    write JSON file to filename\n\
-", FileName::canonicalName(global.inifilename), fpic);
+", FileName::canonicalName(global.inifilename), m32, fpic);
 }
 
 extern signed char tyalignsize[];
@@ -327,7 +332,7 @@ int tryMain(size_t argc, const char *argv[])
     global.params.defaultlibname = "phobos";
 #elif TARGET_LINUX
     global.params.defaultlibname = "libphobos2.a";
-#elif TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     global.params.defaultlibname = "phobos2";
 #else
 #error "fix this"
@@ -361,7 +366,12 @@ int tryMain(size_t argc, const char *argv[])
     VersionCondition::addPredefinedGlobalIdent("Posix");
     VersionCondition::addPredefinedGlobalIdent("OpenBSD");
     VersionCondition::addPredefinedGlobalIdent("ELFv1");
-    global.params.isFreeBSD = true;
+    global.params.isOpenBSD = true;
+#elif TARGET_DRAGONFLYBSD
+    VersionCondition::addPredefinedGlobalIdent("Posix");
+    VersionCondition::addPredefinedGlobalIdent("DragonFlyBSD");
+    VersionCondition::addPredefinedGlobalIdent("ELFv1");
+    global.params.isDragonFlyBSD = true;
 #elif TARGET_SOLARIS
     VersionCondition::addPredefinedGlobalIdent("Posix");
     VersionCondition::addPredefinedGlobalIdent("Solaris");
@@ -386,7 +396,7 @@ int tryMain(size_t argc, const char *argv[])
     {
 #if _WIN32
         global.inifilename = findConfFile(argv[0], "sc.ini");
-#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun
+#elif __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun
         global.inifilename = findConfFile(argv[0], "dmd.conf");
 #else
 #error "fix this"
@@ -487,7 +497,7 @@ int tryMain(size_t argc, const char *argv[])
             }
             else if (strcmp(p + 1, "fPIC") == 0)
             {
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
                 global.params.pic = 1;
 #else
                 goto Lerror;
@@ -511,8 +521,12 @@ int tryMain(size_t argc, const char *argv[])
             }
             else if (strcmp(p + 1, "m32") == 0)
             {
+            #if TARGET_DRAGONFLYBSD
+                error(Loc(), "-m32 is not supported on DragonFlyBSD, it is 64-bit only");
+            #else
                 global.params.is64bit = false;
                 global.params.mscoff = false;
+            #endif
             }
             else if (strcmp(p + 1, "m64") == 0)
             {
@@ -906,6 +920,9 @@ Language changes listed by -transition=id:\n\
 #if __OpenBSD__
                 browse("http://dlang.org/dmd-openbsd.html");
 #endif
+#if __DragonFly__
+                browse("http://dlang.org/dmd-dragonflybsd.html");
+#endif
                 exit(EXIT_SUCCESS);
             }
             else if (strcmp(p + 1, "run") == 0)
@@ -981,7 +998,7 @@ Language changes listed by -transition=id:\n\
     global.params.pic = 1;
 #endif
 
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
     if (global.params.lib && global.params.dll)
         error(Loc(), "cannot mix -lib and -shared");
 #endif
@@ -1197,7 +1214,7 @@ Language changes listed by -transition=id:\n\
                 continue;
             }
 
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
             if (FileName::equals(ext, global.dll_ext))
             {
                 global.params.dllfiles->push(files[i]);

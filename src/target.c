@@ -33,7 +33,7 @@ void Target::init()
         ptrsize = 8;
 
     if (global.params.isLinux || global.params.isFreeBSD
-        || global.params.isOpenBSD || global.params.isSolaris)
+        || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
     {
         realsize = 12;
         realpad = 2;
@@ -60,7 +60,7 @@ void Target::init()
 
     if (global.params.is64bit)
     {
-        if (global.params.isLinux || global.params.isFreeBSD || global.params.isSolaris)
+        if (global.params.isLinux || global.params.isFreeBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
         {
             realsize = 16;
             realpad = 6;
@@ -95,7 +95,7 @@ unsigned Target::alignsize(Type* type)
 
         case Tcomplex32:
             if (global.params.isLinux || global.params.isOSX || global.params.isFreeBSD
-                || global.params.isOpenBSD || global.params.isSolaris)
+                || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
                 return 4;
             break;
 
@@ -105,7 +105,7 @@ unsigned Target::alignsize(Type* type)
         case Timaginary64:
         case Tcomplex64:
             if (global.params.isLinux || global.params.isOSX || global.params.isFreeBSD
-                || global.params.isOpenBSD || global.params.isSolaris)
+                || global.params.isOpenBSD || global.params.isDragonFlyBSD || global.params.isSolaris)
                 return global.params.is64bit ? 8 : 4;
             break;
 
@@ -155,6 +155,11 @@ unsigned Target::critsecsize()
         // sizeof(pthread_mutex_t) for OpenBSD.
         return global.params.isLP64 ? 8 : 4;
     }
+    else if (global.params.isDragonFlyBSD)
+    {
+        // sizeof(pthread_mutex_t) for DragonFlyBSD.
+        return global.params.isLP64 ? 8 : 4;
+    }
     else if (global.params.isOSX)
     {
         // sizeof(pthread_mutex_t) for OSX.
@@ -183,6 +188,7 @@ Type *Target::va_listType()
     else if (global.params.isLinux ||
              global.params.isFreeBSD ||
              global.params.isOpenBSD ||
+             global.params.isDragonFlyBSD ||
              global.params.isSolaris ||
              global.params.isOSX)
     {

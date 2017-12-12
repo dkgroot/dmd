@@ -3,7 +3,9 @@
 #define __STDC_LIMIT_MACROS 1
 #endif
 #include <stdint.h>
-
+#if __DragonFly__
+#include <machine/int_limits.h>
+#endif
 
 int adds(int x, int y, bool& overflow);
 int64_t adds(int64_t x, int64_t y, bool& overflow);

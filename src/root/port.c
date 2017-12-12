@@ -579,12 +579,13 @@ longdouble Port::strtold(const char *p, char **endp)
 
 #endif
 
-#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__
+#if __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__
 
 #include <math.h>
 #if __linux__
 #include <bits/nan.h>
-#include <bits/mathdef.h>
+//#include <bits/mathdef.h>
+#include <complex.h>
 #endif
 #if __FreeBSD__ && __i386__
 #include <ieeefp.h>
@@ -670,7 +671,7 @@ int Port::isNan(double r)
 #else
     return __inline_isnan(r);
 #endif
-#elif __FreeBSD__ || __OpenBSD__
+#elif __FreeBSD__ || __OpenBSD__ || __DragonFly__
     return isnan(r);
 #else
     #undef isnan
@@ -686,7 +687,7 @@ int Port::isNan(longdouble r)
 #else
     return __inline_isnan(r);
 #endif
-#elif __FreeBSD__ || __OpenBSD__
+#elif __FreeBSD__ || __OpenBSD__ || __DragonFly__
     return isnan(r);
 #else
     #undef isnan
@@ -714,7 +715,7 @@ int Port::isInfinity(double r)
 {
 #if __APPLE__
     return fpclassify(r) == FP_INFINITE;
-#elif __FreeBSD__ || __OpenBSD__
+#elif __FreeBSD__ || __OpenBSD__ || __DragonFly__
     return isinf(r);
 #else
     #undef isinf
@@ -729,7 +730,8 @@ longdouble Port::sqrt(longdouble x)
 
 longdouble Port::fmodl(longdouble x, longdouble y)
 {
-#if __FreeBSD__ && __FreeBSD_version < 800000 || __OpenBSD__
+#if __FreeBSD__ && __FreeBSD_version < 800000 || __OpenBSD__ || __DragonFly__
+    #pragma warning Fix fmod() hack
     return ::fmod(x, y);        // hack for now, fix later
 #else
     return ::fmodl(x, y);

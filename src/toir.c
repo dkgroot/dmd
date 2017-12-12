@@ -934,7 +934,7 @@ L2:
         //printf("  3 RETstack\n");
         return RETstack;
     }
-    else if ((global.params.isLinux || global.params.isOSX || global.params.isFreeBSD || global.params.isSolaris) &&
+    else if ((global.params.isLinux || global.params.isOSX || global.params.isFreeBSD || global.params.isDragonFlyBSD || global.params.isSolaris) &&
              tf->linkage == LINKc &&
              tns->iscomplex())
     {

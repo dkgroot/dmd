@@ -43,6 +43,7 @@ typedef struct
             //#define EV_CURRENT        1       /* Current header format */
 
         #define EI_OSABI        7           /* OS ABI  byte offset 7 */
+            #define ELFOSABI_NONE       0       /* None ABI */
             #define ELFOSABI_SYSV       0       /* UNIX System V ABI */
             #define ELFOSABI_HPUX       1       /* HP-UX */
             #define ELFOSABI_NETBSD     2
@@ -51,6 +52,7 @@ typedef struct
             #define ELFOSABI_OPENBSD    12
             #define ELFOSABI_ARM        97      /* ARM */
             #define ELFOSABI_STANDALONE 255     /* Standalone/embedded */
+            #define ELFOSABI_DRAGONFLYBSD ELFOSABI_NONE
 
         #define EI_ABIVERSION   8           /* ABI version byte offset 8 */
 

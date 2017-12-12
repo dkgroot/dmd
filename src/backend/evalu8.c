@@ -39,7 +39,7 @@
 #include        <fp.h>
 #endif
 
-#if __FreeBSD__ || __OpenBSD__
+#if __FreeBSD__ || __OpenBSD__ || __DragonFly__
 #define fmodl fmod
 #endif
 
@@ -547,7 +547,7 @@ elem *poptelem(elem *e)
                 if (e2->Eoper == OPconst)
                 {   targ_int i = e2->EV.Vint;
 
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
                     if (i && e1->EV.sp.Vsym->Sfl == FLgot)
                         break;
 #endif

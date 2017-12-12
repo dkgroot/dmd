@@ -154,6 +154,22 @@ void out_config_init(
         config.flags3 |= CFG3pic;
     config.objfmt = OBJ_ELF;
 #endif
+#if TARGET_DRAGONFLYBSD
+    if (model == 64)
+    {   config.exe = EX_DRAGONFLYBSD64;
+        config.fpxmmregs = TRUE;
+    }
+    else
+    {
+        printf("DragonFlyBSD only supports 64-bit applications\n");
+        assert(0);			// Only 64-bit supported on dragonflybsd
+    }
+    config.flags |= CFGnoebp;
+    config.flags |= CFGalwaysframe;
+    if (!exe)
+        config.flags3 |= CFG3pic;
+    config.objfmt = OBJ_ELF;
+#endif
 #if TARGET_SOLARIS
     if (model == 64)
     {   config.exe = EX_SOLARIS64;
@@ -303,7 +319,7 @@ void util_set32()
         tysize[TYjhandle + i] = LONGSIZE;
         tysize[TYnptr + i] = LONGSIZE;
         tysize[TYnref + i] = LONGSIZE;
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         tysize[TYldouble + i] = 12;
         tysize[TYildouble + i] = 12;
         tysize[TYcldouble + i] = 24;
@@ -335,7 +351,7 @@ void util_set32()
         tyalignsize[TYjhandle + i] = LONGSIZE;
         tyalignsize[TYnref + i] = LONGSIZE;
         tyalignsize[TYnptr + i] = LONGSIZE;
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         tyalignsize[TYldouble + i] = 4;
         tyalignsize[TYildouble + i] = 4;
         tyalignsize[TYcldouble + i] = 4;
@@ -378,7 +394,7 @@ void util_set64()
         tysize[TYjhandle + i] = 8;
         tysize[TYnptr + i] = 8;
         tysize[TYnref + i] = 8;
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_SOLARIS || TARGET_OSX
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS || TARGET_OSX
         tysize[TYldouble + i] = 16;
         tysize[TYildouble + i] = 16;
         tysize[TYcldouble + i] = 32;
@@ -406,7 +422,7 @@ void util_set64()
         tyalignsize[TYjhandle + i] = 8;
         tyalignsize[TYnptr + i] = 8;
         tyalignsize[TYnref + i] = 8;
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
         tyalignsize[TYldouble + i] = 16;
         tyalignsize[TYildouble + i] = 16;
         tyalignsize[TYcldouble + i] = 16;

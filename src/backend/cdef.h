@@ -27,6 +27,7 @@
         __APPLE__       Mac OSX
         __FreeBSD__     FreeBSD
         __OpenBSD__     OpenBSD
+        __DragonFly__   DragonFlyBSD
         __sun           Solaris, OpenSolaris, SunOS, OpenIndiana, etc
         __OS2__         IBM OS/2
         DOS386          32 bit DOS extended executable
@@ -128,6 +129,23 @@ One and only one of these macros must be set by the makefile:
  * with these goals, and should be fixed.
  */
 
+/* DragonFlyBSD Version
+ * -------------
+ * There are two main issues: hosting the compiler on OpenBSD,
+ * and generating (targetting) OpenBSD executables.
+ * The "__DragonFly__" and "__GNUC__" macros control hosting issues
+ * for operating system and compiler dependencies, respectively.
+ * To target DragonFlyBSD executables, use ELFOBJ for things specific to the
+ * ELF object file format, and TARGET_DRAGONFLYBSD for things specific to
+ * the DragonFlyBSD memory model.
+ * If this is all done right, one could generate a DragonFlyBSD object file
+ * even when compiling on linux/windows/osx etc, and vice versa.
+ * The compiler source code currently uses these macros very inconsistently
+ * with these goals, and should be fixed.
+ *
+ * DMD was Ported to DragonFlyBSD by Diederik de Groot <ddegroot [at] talon.nl>
+ */
+
 /* Solaris Version
  * -------------
  * There are two main issues: hosting the compiler on Solaris,
@@ -189,13 +207,18 @@ One and only one of these macros must be set by the makefile:
 #endif
 
 // Set to 1 using the makefile
+#ifndef TARGET_DRAGONFLYBSD
+#define TARGET_DRAGONFLYBSD  0          // target is an OpenBSD executable
+#endif
+
+// Set to 1 using the makefile
 #ifndef TARGET_SOLARIS
 #define TARGET_SOLARIS  0               // target is a Solaris executable
 #endif
 
 // This is the default
 #ifndef TARGET_WINDOS
-#define TARGET_WINDOS   (!(TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS))
+#define TARGET_WINDOS   (!(TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS))
 #endif
 
 #if __GNUC__
@@ -271,7 +294,7 @@ typedef long double longdouble;
 
 // Precompiled header variations
 #define MEMORYHX        (_WINDLL && _WIN32)     // HX and SYM files are cached in memory
-#define MMFIO           (_WIN32 || __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun)  // if memory mapped files
+#define MMFIO           (_WIN32 || __linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun)  // if memory mapped files
 #define LINEARALLOC     _WIN32  // if we can reserve address ranges
 
 // H_STYLE takes on one of these precompiled header methods
@@ -476,7 +499,7 @@ typedef unsigned        targ_uns;
 #define DOUBLESIZE      8
 #if TARGET_OSX
 #define LNGDBLSIZE      16      // 80 bit reals
-#elif TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#elif TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define LNGDBLSIZE      12      // 80 bit reals
 #else
 #define LNGDBLSIZE      10      // 80 bit reals
@@ -496,7 +519,7 @@ typedef unsigned        targ_uns;
 #define REGMASK         0xFFFF
 
 // targ_llong is also used to store host pointers, so it should have at least their size
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS || TARGET_OSX || MARS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS || TARGET_OSX || MARS
 typedef targ_llong      targ_ptrdiff_t; /* ptrdiff_t for target machine  */
 typedef targ_ullong     targ_size_t;    /* size_t for the target machine */
 #else
@@ -527,14 +550,14 @@ typedef targ_uns        targ_size_t;    /* size_t for the target machine */
 #define OMFOBJ          TARGET_WINDOS
 #endif
 #ifndef ELFOBJ
-#define ELFOBJ          (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS)
+#define ELFOBJ          (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS)
 #endif
 #ifndef MACHOBJ
 #define MACHOBJ         TARGET_OSX
 #endif
 
 #define SYMDEB_CODEVIEW TARGET_WINDOS
-#define SYMDEB_DWARF    (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS || TARGET_OSX)
+#define SYMDEB_DWARF    (TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS || TARGET_OSX)
 
 #define TOOLKIT_H
 
@@ -733,10 +756,12 @@ struct Config
 #define EX_SOLARIS64    0x200000
 #define EX_OPENBSD      0x400000
 #define EX_OPENBSD64    0x800000
+#define EX_DRAGONFLYBSD64 0x1000000
 
 #define EX_flat         (EX_OS2 | EX_NT | EX_LINUX | EX_WIN64 | EX_LINUX64 | \
                          EX_OSX | EX_OSX64 | EX_FREEBSD | EX_FREEBSD64 | \
                          EX_OPENBSD | EX_OPENBSD64 | \
+                         EX_DRAGONFLYBSD64 | \
                          EX_SOLARIS | EX_SOLARIS64)
 #define EX_dos          (EX_DOSX | EX_ZPM | EX_RATIONAL | EX_PHARLAP | \
                          EX_COM | EX_MZ /*| EX_WIN16*/)
@@ -792,7 +817,7 @@ struct Config
 #define CFG3relax       0x200   // relaxed type checking (C only)
 #define CFG3cpp         0x400   // C++ compile
 #define CFG3igninc      0x800   // ignore standard include directory
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define CFG3mars        0x1000  // use mars libs and headers
 #define NO_FAR          (TRUE)  // always ignore __far and __huge keywords
 #else
@@ -804,7 +829,7 @@ struct Config
 #define CFG3cppcomment  0x8000  // allow C++ style comments
 #define CFG3wkfloat     0x10000 // make floating point references weak externs
 #define CFG3digraphs    0x20000 // support ANSI C++ digraphs
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define CFG3semirelax   0x40000 // moderate relaxed type checking
 #endif
 #define CFG3pic         0x80000 // position independent code
@@ -1013,7 +1038,7 @@ union eve
 #define SYMBOLZERO
 #endif
 
-#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
 #define UNIXFIELDS      (unsigned)-1,(unsigned)-1,0,0,
 #elif TARGET_OSX
 #define UNIXFIELDS      (unsigned)-1,(unsigned)-1,0,0,0,

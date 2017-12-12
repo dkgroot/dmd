@@ -91,7 +91,7 @@ void WRTYxx(tym_t t)
         dbg_printf("mTYconst|");
     if (t & mTYvolatile)
         dbg_printf("mTYvolatile|");
-#if !MARS && (__linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __sun)
+#if !MARS && (__linux__ || __APPLE__ || __FreeBSD__ || __OpenBSD__ || __DragonFly__ || __sun)
     if (t & mTYtransu)
         dbg_printf("mTYtransu|");
 #endif
@@ -270,7 +270,7 @@ void WRFL(enum FL fl)
          "local ","tlsdat",
          "bprel ","frameh","blocko","alloca",
          "stack ","dsym  ",
-#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
+#if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_DRAGONFLYBSD || TARGET_SOLARIS
          "got   ","gotoff",
 #endif
         };
