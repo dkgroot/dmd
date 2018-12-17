@@ -71,7 +71,7 @@ WARNINGS := $(WARNINGS) \
 	-Wno-unused-but-set-variable \
 	-Wno-uninitialized
 endif
-# Clangn Specific
+# Clang Specific
 ifeq ($(HOST_CC), clang++)
 WARNINGS := $(WARNINGS) \
 	-Wno-tautological-constant-out-of-range-compare \
@@ -98,6 +98,7 @@ MMD=-MMD -MF $(basename $@).deps
 # Default compiler flags for all source files
 CFLAGS := $(WARNINGS) \
 	-fno-exceptions -fno-rtti \
+	-Wno-narrowing \
 	-D__pascal= -DMARS=1 -DTARGET_$(OS_UPCASE)=1 -DDM_TARGET_CPU_$(TARGET_CPU)=1 -DDMDV2=1 \
 
 ifneq (,$(DEBUG))
